@@ -1,0 +1,66 @@
+jsx
+import React, { useState } from 'react';
+import { View, Text, Button, FlatList, TextInput } from 'react-native';
+import { Audio } from 'expo-av';
+
+const App = () => {
+  const [verb, setVerb] = useState('');
+  const [pronouns, setPronouns] = useState([
+    'I',
+    'You',
+    'We',
+    'They',
+    'She',
+    'He',
+    'It',
+  ]);
+  const [matrix, setMatrix] = useState({});
+
+  const handleVerbChange = (text) => {
+    setVerb(text);
+  };
+
+  const handlePronounPress = (pronoun) => {
+    const newMatrix = { ...matrix };
+    newMatrix[pronoun] = `${pronoun} ${verb}`;
+    setMatrix(newMatrix);
+  };
+
+  const playAudio = async (phrase) => {
+    const sound = new Audio.Sound();
+    try {
+      await sound.loadAsync({ uri: `(link unavailable) });
+      await sound.playAsync();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <View>
+      <TextInput
+        placeholder="Ingrese un verbo"
+        value={verb}
+        onChangeText={handleVerbChange}
+      />
+      <FlatList
+        data={pronouns}
+        renderItem={({ item }) => (
+          <Button title={item} onPress={() => handlePronounPress(item)} />
+        )}
+      />
+      <FlatList
+        data={Object.keys(matrix)}
+        renderItem={({ item }) => (
+          <View>
+            <Text>{matrix[item]}</Text>
+            <Button title="Escuchar" onPress={() => playAudio(matrix[item])} />
+          </View>
+        )}
+      />
+    </View>
+  );
+};
+
+export default App;
+```
